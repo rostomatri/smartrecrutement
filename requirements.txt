@@ -1,0 +1,19 @@
+# Core
+streamlit
+numpy
+pillow
+
+# OCR & PDF
+pytesseract
+pdf2image
+
+# Transformers & NLP
+transformers
+torch
+torchvision
+torchaudio
+scikit-learn
+spacy
+
+# Optional utilities
+opencv-python
