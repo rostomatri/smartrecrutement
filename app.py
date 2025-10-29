@@ -81,18 +81,18 @@ def main():
     
     # Analysis options
     st.markdown("---")
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     
     with col1:
         use_rag = st.checkbox("Enable RAG Skills Extraction", value=True, 
                              help="Use semantic similarity to detect 1000+ skills")
     with col2:
-        use_llm = st.checkbox("Enable LLM Analysis", value=False,
-                             help="Use Gemini AI for structured extraction (slower)")
-    with col3:
-        if use_llm:
-            gemini_api_key = st.text_input("Gemini API Key", type="password",
-                                          value="")
+        # Gemini is always enabled - get API key from environment
+        gemini_api_key = os.getenv("GOOGLE_API_KEY")
+        if not gemini_api_key:
+            st.warning("⚠️ Gemini API key not found in .env file. LLM analysis will be skipped.")
+        else:
+            st.info("✅ Gemini AI enabled for structured extraction")
     
     # Analyze button
     if st.button("🔍 Analyze Resume", type="primary", use_container_width=True):
@@ -142,16 +142,20 @@ def main():
                     st.info("Running RAG skills extraction...")
                     rag_skills = rag_extractor.extract_skills_rag(resume_text, threshold=0.65)
                 
-                # LLM analysis
+                # LLM analysis (always enabled if API key available)
                 llm_analysis = None
-                if use_llm and gemini_api_key:
-                    st.info("Running LLM analysis...")
-                    llm_extractor = LLMResumeExtractor(
-                        provider='gemini',
-                        model='gemini-2.5-flash',
-                        api_key=gemini_api_key
-                    )
-                    llm_analysis = llm_extractor.extract_from_text(resume_text)
+                if gemini_api_key:
+                    st.info("Running Gemini AI analysis...")
+                    try:
+                        llm_extractor = LLMResumeExtractor(
+                            provider='gemini',
+                            model='gemini-2.5-flash',
+                            api_key=gemini_api_key
+                        )
+                        llm_analysis = llm_extractor.extract_from_text(resume_text)
+                    except Exception as e:
+                        st.error(f"Gemini API error: {e}")
+                        llm_analysis = None
                 
                 # Display results
                 display_results(ats_results, rag_skills, llm_analysis, resume_text, job_predictor)
