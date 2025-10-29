@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Simple ATS Resume Analyzer
 Upload resume and job description to get match score
@@ -5,13 +6,31 @@ Upload resume and job description to get match score
 
 import streamlit as st
 import os
+import sys
 import tempfile
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Set UTF-8 encoding for Windows console
+if sys.platform == 'win32':
+    import io
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(encoding='utf-8')
+    if isinstance(sys.stderr, io.TextIOWrapper):
+        sys.stderr.reconfigure(encoding='utf-8')
+
 from pdf_extractor import PDFExtractor
 from ats_pipeline import ATSPipeline
 from rag_skills_extractor import RAGSkillsExtractor
 from llm_extractor import LLMResumeExtractor
 from job_role_predictor import JobRolePredictor
 import json
+
+# Get the directory where app.py is located
+APP_DIR = Path(__file__).parent
 
 # Page config
 st.set_page_config(
@@ -26,11 +45,13 @@ def init_components():
     pdf_extractor = PDFExtractor()
     ats_pipeline = ATSPipeline(use_spacy=True)
     rag_extractor = RAGSkillsExtractor(
-        skills_csv_path="data/skills_exploded (2).csv",
+        skills_csv_path=str(APP_DIR / "data" / "skills_exploded (2).csv"),
         max_skills=10000
     )
     try:
-        job_predictor = JobRolePredictor()
+        job_predictor = JobRolePredictor(
+            model_path=str(APP_DIR / "JobPrediction_Model")
+        )
     except Exception as e:
         st.warning(f"Job predictor not available: {e}")
         job_predictor = None

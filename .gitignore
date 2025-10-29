@@ -29,6 +29,10 @@ wheels/
 venv/
 ENV/
 
+# Environment variables
+.env
+.env.local
+
 # IDE
 .vscode/
 .idea/

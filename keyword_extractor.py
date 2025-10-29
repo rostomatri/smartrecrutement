@@ -27,13 +27,13 @@ class KeywordExtractor:
             try:
                 # Try to load the medium model first (better for entity recognition)
                 self.nlp = spacy.load("en_core_web_md")
-                print("✓ Loaded spaCy model: en_core_web_md")
+                print("[OK] Loaded spaCy model: en_core_web_md")
             except OSError:
                 try:
                     self.nlp = spacy.load("en_core_web_sm")
-                    print("✓ Loaded spaCy model: en_core_web_sm")
+                    print("[OK] Loaded spaCy model: en_core_web_sm")
                 except OSError:
-                    print("⚠️ Warning: spaCy model not found. Install with: python -m spacy download en_core_web_md")
+                    print("[WARNING] spaCy model not found. Install with: python -m spacy download en_core_web_md")
                     self.use_spacy = False
     
     def preprocess_text(self, text: str) -> str:
