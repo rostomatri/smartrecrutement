@@ -1,0 +1,18 @@
+# Core
+streamlit==1.39.0
+pandas==2.2.3
+numpy==1.26.4
+scikit-learn==1.5.2
+sentence-transformers==3.2.1
+requests==2.32.3
+
+# Optional LLM clients
+groq==0.4.0
+openai==1.52.2
+
+# Optional multi-agent orchestration
+crewai==0.28.5
+
+# Utilities
+tqdm==4.66.5
+python-dotenv==1.0.0
